@@ -16,8 +16,7 @@ export class CustomTicket extends React.PureComponent<CustomProps,{}> {
         return (
             <li key={this.state.id} id="li" className='ticket'>				
 				<h5 className='title' id={this.state.id}>{this.state.title}
-                {// Task 2 - Create a button that renames the ticket's title
-                }
+                {/* Task 1b - Rename button*/}
 				<button className="button" style={{float:'right'}}
 				onClick={()=>{					
                     // get a new title
@@ -25,17 +24,25 @@ export class CustomTicket extends React.PureComponent<CustomProps,{}> {
                     // set the new title if it's not null or the same as the current title
                     if(newTitle!="null"&&newTitle!=this.state.title){
                         this.state.title = newTitle;
-                        //maybe add here a server-side manipulation
+                        // TODO: add here a server-side manipulation
+                        // TODO (maybe): replace forceUpdate() with setState()
                         this.forceUpdate();
                     }                										
 				}}
 				>Rename</button>
 				</h5>
-				{//Task 1a - add the content to the ticket
-				}
+				{/* Task 1a - Display the ticket's content*/}
 				<span>{this.state.content}</span>
+
+
 				<footer>
-					<div className='meta-data'>By {this.state.userEmail} | { new Date(this.state.creationTime).toLocaleString()}</div>
+				    <div className='meta-data'>By {this.state.userEmail} | { new Date(this.state.creationTime).toLocaleString()}</div> 
+                    {/* Task 1c - Display labels in the tickets*/}
+                    <div style={{float:'right'}}>
+                        {this.state.labels?.map((label)=>(
+                            <button disabled>{label}</button>                       
+                        ))}
+                    </div>                       
 				</footer>
 			</li>
         );
