@@ -18,7 +18,13 @@ app.use((_, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', '*');
   next();
 });
-
+/**
+ * The function sorts Tickets array inplace and returns the sorted Tickets
+ * @param data 
+ * @param sortBy 
+ * @param asc 
+ * @returns 
+ */
 function sortTickets(data: Ticket[], sortBy: string,asc:number) {
   if (sortBy == "email") {
     data.sort(function (a, b) {
@@ -50,11 +56,12 @@ function sortTickets(data: Ticket[], sortBy: string,asc:number) {
 
 app.get(APIPath, (req, res) => {
   
-  // @ts-ignore
-  const page: number = req.query.page || 1;
+  const page: number = parseInt(req.query.page as string);
   const sortBy: string = req.query.sortBy as string;
   const asc: number = parseInt(req.query.asc as string);
-
+  console.log("page: "+page);
+  console.log("sortBy: "+sortBy);
+  console.log("asc: "+asc);
   const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const sortedData = sortTickets(paginatedData,sortBy,asc);
   res.send(sortedData);

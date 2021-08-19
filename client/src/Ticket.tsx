@@ -2,6 +2,7 @@ import React from "react";
 
 import "./App.scss";
 import { Ticket } from "./api";
+import {Button, Chip} from '@material-ui/core' 
 
 type CustomProps = {
   t: Ticket;
@@ -13,12 +14,9 @@ export class CustomTicket extends React.PureComponent<CustomProps, {}> {
   render() {
     return (
       <li key={this.state.id} id="li" className="ticket">
-        <h5 className="title" id={this.state.id}>
-          {this.state.title}
-          {/* Task 1b - Rename button*/}
-          <button
-            className="button"
-            style={{ float: "right" }}
+        {/* Task 1b - Rename button*/}
+        <Button color="primary" variant="contained"       
+            style={{ float: "right", fontSize:12 }}
             onClick={() => {
               // get a new title
               var newTitle = String(prompt("Type new title", this.state.title));
@@ -30,9 +28,10 @@ export class CustomTicket extends React.PureComponent<CustomProps, {}> {
                 this.forceUpdate();
               }
             }}
-          >
-            Rename
-          </button>
+          >Rename
+          </Button>
+        <h5 className="title" id={this.state.id}>
+          {this.state.title}
         </h5>
 
         {/* Task 1a - Display the ticket's content*/}
@@ -44,9 +43,10 @@ export class CustomTicket extends React.PureComponent<CustomProps, {}> {
             {new Date(this.state.creationTime).toLocaleString()}
           </div>
           {/* Task 1c - Display labels in the tickets*/}
-          <div style={{ float: "right" }}>
+          <div style={{ float: "right", fontSize:10 }}>
             {this.state.labels?.map((label) => (
-              <button disabled>{label}</button>
+              <Chip color="primary" label={label}></Chip>
+
             ))}
           </div>
         </footer>
