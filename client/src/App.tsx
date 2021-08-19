@@ -1,6 +1,9 @@
 import React from 'react';
+
 import './App.scss';
 import {createApiClient, Ticket} from './api';
+import ReactDOM from 'react-dom';
+import CustomTicket from './Ticket';
 
 export type AppState = {
 	tickets?: Ticket[],
@@ -8,36 +11,27 @@ export type AppState = {
 }
 
 const api = createApiClient();
-
 export class App extends React.PureComponent<{}, AppState> {
 
 	state: AppState = {
 		search: ''
 	}
-
 	searchDebounce: any = null;
 
 	async componentDidMount() {
 		this.setState({
 			tickets: await api.getTickets()
 		});
-	}
-
+	}	
 	renderTickets = (tickets: Ticket[]) => {
 
 		const filteredTickets = tickets
 			.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(this.state.search.toLowerCase()));
 
-
 		return (<ul className='tickets'>
-			{filteredTickets.map((ticket) => (<li key={ticket.id} className='ticket'>
-				<h5 className='title'>{ticket.title}</h5>
-				<span>{ticket.content}</span>
-				<footer>
-					<div className='meta-data'>By {ticket.userEmail} | { new Date(ticket.creationTime).toLocaleString()}</div>
-				</footer>
-			</li>))}
-		</ul>);
+			{filteredTickets.map((ticket) => (<CustomTicket t={ticket}></CustomTicket>))}
+			
+			</ul>);
 	}
 
 	onSearch = async (val: string, newPage?: number) => {
