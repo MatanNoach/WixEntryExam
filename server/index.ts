@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser = require('body-parser');
 import { tempData } from './temp-data';
 import { serverAPIPort, APIPath } from '@fed-exam/config';
+import {Ticket} from '../client/src/api'
 
 console.log('starting server', { serverAPIPort, APIPath });
 
@@ -18,14 +19,45 @@ app.use((_, res, next) => {
   next();
 });
 
-app.get(APIPath, (req, res) => {
+function sortTickets(data: Ticket[], sortBy: string,asc:number) {
+  if (sortBy == "email") {
+    data.sort(function (a, b) {
+      var aEmail = a.userEmail.toUpperCase();
+      var bEmail = b.userEmail.toUpperCase();
+      if (aEmail > bEmail) {
+        return 1*asc;
+      } else if (aEmail < bEmail) {
+        return -1*asc;
+      }
+      return 0;
+    });
+  } else if (sortBy == "date") {
+    data.sort((a, b) => (a.creationTime - b.creationTime)*asc);
+  } else if (sortBy == "title") {
+    data.sort(function (a, b) {
+      var aTitle = a.title.toUpperCase();
+      var bTitle = b.title.toUpperCase();
+      if (aTitle > bTitle) {
+        return 1*asc;
+      } else if (aTitle < bTitle) {
+        return -1*asc;
+      }
+      return 0;
+    });
+  }
+  return data;
+}
 
+app.get(APIPath, (req, res) => {
+  
   // @ts-ignore
   const page: number = req.query.page || 1;
+  const sortBy: string = req.query.sortBy as string;
+  const asc: number = parseInt(req.query.asc as string);
 
   const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  res.send(paginatedData);
+  const sortedData = sortTickets(paginatedData,sortBy,asc);
+  res.send(sortedData);
 });
 
 app.listen(serverAPIPort);

@@ -11,42 +11,20 @@ export type Ticket = {
 };
 
 export type ApiClient = {
-  getTickets: (sortBy: string,isAsc:number) => Promise<Ticket[]>;
+  getTickets: (
+    page: number,
+    sortBy: string,
+    isAsc: number
+  ) => Promise<Ticket[]>;
 };
-function sortTickets(data: Ticket[], sortBy: string,isAsc:number) {
-  if (sortBy == "email") {
-    data.sort(function (a, b) {
-      var aEmail = a.userEmail.toUpperCase();
-      var bEmail = b.userEmail.toUpperCase();
-      if (aEmail > bEmail) {
-        return 1*isAsc;
-      } else if (aEmail < bEmail) {
-        return -1*isAsc;
-      }
-      return 0;
-    });
-  } else if (sortBy == "date") {
-    data.sort((a, b) => (a.creationTime - b.creationTime)*isAsc);
-  } else if (sortBy == "title") {
-    data.sort(function (a, b) {
-      var aTitle = a.title.toUpperCase();
-      var bTitle = b.title.toUpperCase();
-      if (aTitle > bTitle) {
-        return 1*isAsc;
-      } else if (aTitle < bTitle) {
-        return -1*isAsc;
-      }
-      return 0;
-    });
-  }
-  return data;
-}
+
 export const createApiClient = (): ApiClient => {
   return {
-    getTickets: (sortBy: string,isAsc:number) => {
-      var data: Promise<Ticket[]> = axios
-        .get(APIRootPath)
-        .then((res) => sortTickets(res.data, sortBy,isAsc));
+    getTickets: (page: number, sortBy: string, asc: number) => {
+      const request: string =
+        APIRootPath + "/?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
+      console.log(request);
+      var data: Promise<Ticket[]> = axios.get(request).then((res) => res.data);
       return data;
     },
   };

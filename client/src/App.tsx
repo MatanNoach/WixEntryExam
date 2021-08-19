@@ -8,7 +8,7 @@ export type AppState = {
   tickets?: Ticket[];
   search: string;
   sortBy: string;
-  isAsc:number;
+  asc:number;
 };
 
 const api = createApiClient();
@@ -18,13 +18,13 @@ export class App extends React.PureComponent<{}, AppState> {
   state: AppState = {
     search: "",
     sortBy: "none",
-	isAsc: 1,
+	asc: 1,
   };
   searchDebounce: any = null;
 
   async componentDidMount() {
     this.setState({
-      tickets: await api.getTickets(this.state.sortBy,this.state.isAsc),
+      tickets: await api.getTickets(2,this.state.sortBy,this.state.asc),
     });    
   }
 
@@ -66,9 +66,9 @@ export class App extends React.PureComponent<{}, AppState> {
 	console.log("compoenetDidUpdate: ")
 	console.log("prevState: ",prevState)
 	console.log("thisState: ",this.state)
-    if ((prevState.sortBy !== this.state.sortBy)|| (prevState.isAsc !== this.state.isAsc)) {
+    if ((prevState.sortBy !== this.state.sortBy)|| (prevState.asc !== this.state.asc)) {
 		// perform getTickets and set the new tickets
-		const tickets = await api.getTickets(this.state.sortBy,this.state.isAsc);
+		const tickets = await api.getTickets(0,this.state.sortBy,this.state.asc);
 		this.setState({
 		  tickets
 		});
@@ -95,10 +95,10 @@ export class App extends React.PureComponent<{}, AppState> {
 			  console.log("in date onClick()")
 			  if(this.state.sortBy!=="date"){
 				console.log("1")
-            	this.setState({ sortBy: "date",isAsc:1 });
+            	this.setState({ sortBy: "date",asc:1 });
 			  }else{
 				console.log("2")
-				this.setState({ isAsc: this.state.isAsc*-1 });
+				this.setState({ asc: this.state.asc*-1 });
 			  }
           }}
         >
@@ -107,9 +107,9 @@ export class App extends React.PureComponent<{}, AppState> {
         <button
           onClick={() => {
             if(this.state.sortBy!=="title"){
-            	this.setState({ sortBy: "title",isAsc:1 });
+            	this.setState({ sortBy: "title",asc:1 });
 			  }else{
-				this.setState({ isAsc: this.state.isAsc*-1 });
+				this.setState({ asc: this.state.asc*-1 });
 			  }
           }}
         >
@@ -118,9 +118,9 @@ export class App extends React.PureComponent<{}, AppState> {
         <button
           onClick={() => {
             if(this.state.sortBy!=="email"){
-            	this.setState({ sortBy: "email",isAsc:1 });
+            	this.setState({ sortBy: "email",asc:1 });
 			  }else{
-				this.setState({ isAsc: this.state.isAsc*-1 });
+				this.setState({ asc: this.state.asc*-1 });
 			  }
           }}
         >
