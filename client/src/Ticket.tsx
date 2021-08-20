@@ -7,12 +7,12 @@ import { Button, Chip } from "@material-ui/core";
 type CustomProps = {
   t: Ticket;
 };
-
+/**
+ * 
+ */
 export class CustomTicket extends React.PureComponent<CustomProps,{ title: string }> {
   constructor(props: CustomProps) {
-    super(props);
-    console.log("in constructor");
-    console.log(props)
+    super(props);    
     this.state = {
       title: this.props.t.title,
     };
@@ -30,7 +30,6 @@ export class CustomTicket extends React.PureComponent<CustomProps,{ title: strin
     if (newTitle !== "null" && newTitle !== this.state.title) {
       this.setState({ title: newTitle });
       // TODO: add here a server-side manipulation
-      // TODO (maybe): replace forceUpdate() with setState()
     }
   };
   render() {

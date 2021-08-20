@@ -8,7 +8,7 @@ console.log('starting server', { serverAPIPort, APIPath });
 
 const app = express();
 
-const PAGE_SIZE = 20;
+export const PAGE_SIZE = 20;
 
 app.use(bodyParser.json());
 
@@ -56,16 +56,19 @@ function sortTickets(tickets: Ticket[], sortBy: string,asc:number) {
 }
 
 app.get(APIPath, (req, res) => {
-  
   const page: number = parseInt(req.query.page as string);
   const sortBy: string = req.query.sortBy as string;
   const asc: number = parseInt(req.query.asc as string);
-  console.log("page: "+page);
-  console.log("sortBy: "+sortBy);
-  console.log("asc: "+asc);
+  console.log("page: ",page);
+  console.log("sortBy: ",sortBy);
+  console.log("asc: ",asc);
+  const dataSize = tempData.length;
+  const maxPage= Math.floor(tempData.length/PAGE_SIZE);
+  console.log("datasize: ",dataSize)
+  console.log("maxPage: ",maxPage)
   const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const sortedData = sortTickets(paginatedData,sortBy,asc);
-  res.send(sortedData);
+  res.json({data:sortedData,dataSize:dataSize,maxPage:maxPage});
 });
 
 app.listen(serverAPIPort);

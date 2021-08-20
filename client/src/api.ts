@@ -14,18 +14,26 @@ export type ApiClient = {
   getTickets: (
     page: number,
     sortBy: string,
-    isAsc: number
-  ) => Promise<Ticket[]>;
+    isAsc: number,
+    callback?: Function
+  ) => Promise<Ticket[]>,
 };
 
+
 export const createApiClient = (): ApiClient => {
+
   return {
-    getTickets: (page: number, sortBy: string, asc: number) => {
+    getTickets: (page: number, sortBy: string, asc: number, callback?: Function) => {
       const request: string =
         APIRootPath + "/?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
       console.log(request);
-      var data: Promise<Ticket[]> = axios.get(request).then((res) => res.data);
+      var data: Promise<Ticket[]> = axios.get(request).then((res) => {
+        if(callback){
+          callback(res.data.dataSize,res.data.maxPage);
+        }
+        return res.data.data;
+      });
       return data;
-    },
+    },    
   };
 };

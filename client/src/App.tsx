@@ -3,24 +3,27 @@ import React, { useState } from "react";
 import "./App.scss";
 import { createApiClient, Ticket } from "./api";
 import CustomTicket from "./Ticket";
-import ReactDOM from "react-dom";
-import { Box as div, Button } from "@material-ui/core";
+import {Button} from "@material-ui/core";
 export type AppState = {
   tickets?: Ticket[];
   search: string;
   sortBy: string;
   asc: number;
   page: number;
+  maxPage:number;
+  dataSize:number;
 };
-
+const PAGE_SIZE:number = 20;
 const api = createApiClient();
 
 export class App extends React.PureComponent<{}, AppState> {
   state: AppState = {
     search: "",
-    sortBy: "title",
-    asc: -1,
+    sortBy: "none",
+    asc: 1,
     page: 1,
+    maxPage:0,
+    dataSize:0
   };
   searchDebounce: any = null;
 
@@ -29,9 +32,12 @@ export class App extends React.PureComponent<{}, AppState> {
       tickets: await api.getTickets(
         this.state.page,
         this.state.sortBy,
-        this.state.asc
+        this.state.asc,
+        (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize})
       ),
     });
+    console.log("datasize: ",this.state.dataSize)
+    console.log("maxPage: ",this.state.maxPage)
   }
   sortTickets = (sortType: string) => {
     if (this.state.sortBy !== sortType) {
@@ -42,10 +48,7 @@ export class App extends React.PureComponent<{}, AppState> {
       });
     }
   };
-  renderTickets = (tickets: Ticket[]) => {
-    console.log("rendering tickets");
-    // filtering option
-
+  renderTickets = (tickets: Ticket[]) => {    
     const filteredTickets = tickets.filter((t) =>
       (t.title.toLowerCase() + t.content.toLowerCase()).includes(
         this.state.search.toLowerCase()
@@ -69,11 +72,7 @@ export class App extends React.PureComponent<{}, AppState> {
     }, 300);
   };
 
-  async componentDidUpdate(prevProp: AppState, prevState: AppState) {
-    // if the sortBy state is different
-    console.log("compoenetDidUpdate: ");
-    console.log("prevState: ", prevState);
-    console.log("thisState: ", this.state);
+  async componentDidUpdate(prevProp: AppState, prevState: AppState) {    
     // if something has changed in the state
     if (
       prevState.sortBy !== this.state.sortBy ||
@@ -81,12 +80,18 @@ export class App extends React.PureComponent<{}, AppState> {
       prevState.page !== this.state.page
     ) {
       // get the new tickets according to the state values
-      this.setState({ tickets: await api.getTickets(this.state.page,this.state.sortBy,this.state.asc) });
+      this.setState({ tickets: await api.getTickets(this.state.page,this.state.sortBy,this.state.asc)});
     }
+  }
+  showResultsNum(){
+    const { tickets } = this.state;
+    const bottomNum = tickets ? PAGE_SIZE*(this.state.page-1): 0;
+    const topNum = tickets ? tickets.length+PAGE_SIZE*(this.state.page-1): 0;
+    const result = "Showing "+bottomNum+"-"+topNum+" results out of "+this.state.dataSize;    
+    return result;
   }
   render() {
     const { tickets } = this.state;
-    console.log("tickets in render: ", tickets);
     return (
       <main>
         <h1>Tickets List</h1>
@@ -98,7 +103,7 @@ export class App extends React.PureComponent<{}, AppState> {
           />
         </header>
         {tickets ? (
-          <div className="results">Showing {tickets.length} results</div>
+          <div className="results">{this.showResultsNum()}</div>
         ) : null}
         <div className="buttons">
           <div className="sort_buttons">
@@ -145,9 +150,11 @@ export class App extends React.PureComponent<{}, AppState> {
               variant="contained"
               color="primary"
               onClick={() => {
+                if(this.state.page<this.state.maxPage){
                 this.setState((prevState: AppState) => {
                   return { page: prevState.page + 1 };
                 });
+              }
               }}
             >
               next
