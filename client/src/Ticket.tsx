@@ -1,20 +1,26 @@
 import React from "react";
 
 import "./App.scss";
-import { Ticket } from "./api";
-import { Button, Chip } from "@material-ui/core";
+import { createApiClient, Ticket } from "./api";
+import { Button, Chip, Fab } from "@material-ui/core";
 
 type CustomProps = {
   t: Ticket;
 };
+type CustomState={
+  title:string,
+  labels?:string[]
+}
+const api = createApiClient();
 /**
  * 
  */
-export class CustomTicket extends React.PureComponent<CustomProps,{ title: string }> {
+export class CustomTicket extends React.PureComponent<CustomProps,CustomState> {
   constructor(props: CustomProps) {
     super(props);    
     this.state = {
       title: this.props.t.title,
+      labels: props.t.labels? props.t.labels:undefined,
     };
   }
   componentDidUpdate(prevProp: CustomProps, prevState: {title:string}){
@@ -32,7 +38,11 @@ export class CustomTicket extends React.PureComponent<CustomProps,{ title: strin
       // TODO: add here a server-side manipulation
     }
   };
-  render() {
+  // the function handles the delete command and updates the labels in the ticket
+  handleDelete = async (label:string)=>{    
+    this.setState({ labels: await api.deleteLabel(this.props.t.id,label)})
+  }
+  render() {    
     return (
       <li key={this.props.t.id} id="li" className="ticket">
         {/* Task 1b - Rename button*/}
@@ -57,9 +67,9 @@ export class CustomTicket extends React.PureComponent<CustomProps,{ title: strin
             {new Date(this.props.t.creationTime).toLocaleString()}
           </div>
           {/* Task 1c - Display labels in the tickets*/}
-          <div style={{ float: "right", fontSize: 10 }}>
-            {this.props.t.labels?.map((label) => (
-              <Chip color="primary" label={label}></Chip>
+          <div style={{ float: "right", fontSize: 10 }}>          
+            {this.state.labels?.map((label) => (
+              <Chip color="primary" variant="outlined" onDelete={()=>this.handleDelete(label)} label={label}></Chip>
             ))}
           </div>
         </footer>

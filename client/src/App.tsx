@@ -35,10 +35,9 @@ export class App extends React.PureComponent<{}, AppState> {
         this.state.asc,
         (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize})
       ),
-    });
-    console.log("datasize: ",this.state.dataSize)
-    console.log("maxPage: ",this.state.maxPage)
+    });    
   }
+  
   sortTickets = (sortType: string) => {
     if (this.state.sortBy !== sortType) {
       this.setState({ sortBy: sortType, asc: 1 });
