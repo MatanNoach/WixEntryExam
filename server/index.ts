@@ -20,14 +20,15 @@ app.use((_, res, next) => {
 });
 /**
  * The function sorts Tickets array inplace and returns the sorted Tickets
- * @param data 
- * @param sortBy 
- * @param asc 
- * @returns 
+ * @param tickets - The tickets needs to be sorted
+ * @param sortBy - The type of sorting.
+ * NOTE - if sortBy is a type not implemented, the function returns the original given array
+ * @param asc - positve if ascending order, and negative if descending
+ * @returns - The sorted tickets
  */
-function sortTickets(data: Ticket[], sortBy: string,asc:number) {
+function sortTickets(tickets: Ticket[], sortBy: string,asc:number) {
   if (sortBy == "email") {
-    data.sort(function (a, b) {
+    tickets.sort(function (a, b) {
       var aEmail = a.userEmail.toUpperCase();
       var bEmail = b.userEmail.toUpperCase();
       if (aEmail > bEmail) {
@@ -38,9 +39,9 @@ function sortTickets(data: Ticket[], sortBy: string,asc:number) {
       return 0;
     });
   } else if (sortBy == "date") {
-    data.sort((a, b) => (a.creationTime - b.creationTime)*asc);
+    tickets.sort((a, b) => (a.creationTime - b.creationTime)*asc);
   } else if (sortBy == "title") {
-    data.sort(function (a, b) {
+    tickets.sort(function (a, b) {
       var aTitle = a.title.toUpperCase();
       var bTitle = b.title.toUpperCase();
       if (aTitle > bTitle) {
@@ -51,7 +52,7 @@ function sortTickets(data: Ticket[], sortBy: string,asc:number) {
       return 0;
     });
   }
-  return data;
+  return tickets;
 }
 
 app.get(APIPath, (req, res) => {
