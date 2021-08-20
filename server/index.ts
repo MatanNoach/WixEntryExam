@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser = require("body-parser");
 import { tempData } from "./temp-data";
-import { serverAPIPort, APIPath } from "@fed-exam/config";
+import { serverAPIPort, APIPath,APIRootPath } from "@fed-exam/config";
 import { Ticket } from "../client/src/api";
 import e = require("express");
 
@@ -14,6 +14,8 @@ const app = express();
 const fileName: string = "data.json";
 
 export const PAGE_SIZE = 20;
+console.log("APIPath: ",APIPath)
+console.log("APIRootPath: ",APIRootPath)
 
 app.use(bodyParser.json());
 
@@ -86,7 +88,7 @@ app.get(APIPath, (req, res) => {
  * The function get a ticket id and label, and deletes the label from the ticket
  * The function sends the new label array or "undefined" if the label or ticket hasn't been found
  */
-app.delete(APIPath, (req, res) => {
+app.delete(APIPath+"/labels", (req, res) => {
   // extract id and label the data from the URL
   const id: string = req.query.id as string;
   const label: string = req.query.label as string;

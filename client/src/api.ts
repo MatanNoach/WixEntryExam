@@ -38,7 +38,7 @@ export const createApiClient = (): ApiClient => {
     getTickets: (page: number, sortBy: string, asc: number, callback?: Function) => {
       // create the URL
       const request: string =
-        APIRootPath + "/?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
+        APIRootPath + "?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
       console.log(request);
       // Call the GET command and call the callback if exists
       var data: Promise<Ticket[]> = axios.get(request).then((res) => {
@@ -59,7 +59,7 @@ export const createApiClient = (): ApiClient => {
      */
     deleteLabel(id:string,label:string):Promise<string[]>{
       // Create the URL
-      const request: string = APIRootPath + "/?id=" + id + "&label=" + label;
+      const request: string = APIRootPath + "/labels?id=" + id + "&label=" + label;
       console.log(request);
       // Call the DELETE command and return the labels
       var labels:Promise<string[]> = axios.delete(request).then((res)=>res.data);
