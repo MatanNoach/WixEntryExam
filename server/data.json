@@ -1,10 +1,14 @@
 [
   {
     "id": "acf2a6a6-ae17-526c-aa2b-ec4f17116293",
-    "title": "[solved]wix Dataset's .setPageSize( ) not working. ",
+    "title": "[solved]wix Dataset's .setPageSize( ) not working  - fixed 2",
     "content": "Hello wix Forum! I was trying to use the .setPageSize() function, to change the number of items to display of my dataset. I read in the documentation that this function can modify this value.\nAfter several failing attempts I decided to try the code in a clean page, I copied the example code in the APi documentation and added a .getPageSize() to see if the change was happening. here is the code:\n\n$w.onReady(function () {\n //TODO: write your page related code here...\n  $w(\"#dataset1\").setPageSize(6)\n  .then( () => {\n    console.log(\"Page size set.\");\n  } )\n  .catch( (err) => {\n let errMsg = err.message;\n let errCode = err.code;\n  } );\n  let val = $w('#dataset1').getPageSize()\n  console.log(val)\n});\nI run it various times and it didn't worked. \nI read in the documentation that: \n\"Calling setPageSize() on a read-only dataset causes an error.\" \nso I checked with my dataset and it was set to \"read-only\" by default but it doesn't give an error, but I noticed that it does gives an error when you set the dataset to \"write-only\". I think that maybe they put \"read-only\" instead of \"write only\" by mistake in the documentation.\nbut the real problem is why .setPageSize() doesn't work, is it a bug? am I doing something wrong? if so please explain to me the right way to use this function because I really need it for my page.\nbelow is a video showing what I did.\nthanks in advance.\n\n \n",
     "userEmail": "lonidgi@robzap.ye",
-    "creationTime": 1527100119585
+    "creationTime": 1527100119585,
+    "labels": [
+      "solved",
+      "no help needed"
+    ]
   },
   {
     "id": "89398e76-823d-58d9-943e-82c12b9f2e8f",
@@ -14,7 +18,8 @@
     "creationTime": 1522202817835,
     "labels": [
       "fetch",
-      "jason"
+      "jason",
+      "help"
     ]
   },
   {
@@ -155,7 +160,10 @@
     "title": "Trend problem when using multilingual in the Wix platform",
     "content": "Hello, when using multilingual on the Wix platform, and when you make the modification to the English version gets a direct change to the Arabic version, for example when modifying the direction of the basic menu elements in the English version to become left to right, the direction of the elements in the Arabic version also becomes Left to right! How do I solve this problem?",
     "userEmail": "mif@jo.tc",
-    "creationTime": 1524362604686
+    "creationTime": 1524362604686,
+    "labels": [
+      "Problem"
+    ]
   },
   {
     "id": "368ff0ad-9dd9-5b22-8f2b-760fd1ac38df",

@@ -38,7 +38,10 @@ export class App extends React.PureComponent<{}, AppState> {
       ),
     });    
   }
-  
+  /**
+   * The function calls the server to sort the tickets by sort type
+   * @param sortType - The sorting type
+   */
   sortTickets = (sortType: string) => {
     if (this.state.sortBy !== sortType) {
       this.setState({ sortBy: sortType, asc: 1 });
@@ -70,7 +73,7 @@ export class App extends React.PureComponent<{}, AppState> {
   };
 
   async componentDidUpdate(prevProp: AppState, prevState: AppState) {    
-    // if something has changed in the state
+    // if specific values have changed in the state
     if (
       prevState.search!==this.state.search ||
       prevState.page !== this.state.page ||
@@ -82,7 +85,10 @@ export class App extends React.PureComponent<{}, AppState> {
         (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize}))});
     }
   }
-  showResultsNum(){
+  /**
+   * @returns - The function returns the propper line that displays the result
+   */
+  getResultsLine(){
     const { tickets } = this.state;
     const bottomNum = tickets ? PAGE_SIZE*(this.state.page-1): 0;
     const topNum = tickets ? tickets.length+PAGE_SIZE*(this.state.page-1): 0;
@@ -101,9 +107,11 @@ export class App extends React.PureComponent<{}, AppState> {
             onChange={(e) => this.onSearch(e.target.value)}
           />
         </header>
+        {/* Task 3 - Display result found to the user */}
         {tickets ? (
-          <div className="results">{this.showResultsNum()}</div>
+          <div className="results">{this.getResultsLine()}</div>
         ) : null}
+        {/* Task 2a - Sorting option */}
         <div className="buttons">
           <div className="sort_buttons">
             <Button
@@ -161,7 +169,6 @@ export class App extends React.PureComponent<{}, AppState> {
           </div>
         </div>
         <ul className="ticket_list"></ul>
-        {/* Calls the function that renders the tickets */}
         {tickets ? this.renderTickets(tickets) : <h2>Loading..</h2>}
       </main>
     );

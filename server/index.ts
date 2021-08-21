@@ -24,6 +24,7 @@ app.use((_, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "*");
   next();
 });
+
 /**
  * The type represents the search values given by the user
  * values:
@@ -238,6 +239,7 @@ app.put(APIPath + "/:id/labels/:label", (req, res) => {
   if (t) {
     // if the ticket have an existing labels array
     if (t.labels) {
+      // add the label to array
       t.labels.push(label);
     } else {
       // create a new array with new label
