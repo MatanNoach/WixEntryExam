@@ -12,7 +12,7 @@ type CustomState = {
 };
 const api = createApiClient();
 /**
- *
+ * A Component of custom ticket
  */
 export class CustomTicket extends React.PureComponent<
   CustomProps,

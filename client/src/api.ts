@@ -74,6 +74,12 @@ export const createApiClient = (): ApiClient => {
       var labels:Promise<string[]> = axios.delete(request).then((res)=>res.data);
       return labels;
     },
+    /**
+     * The function adds a label to a ticket
+     * @param id - The ticket's id
+     * @param label - The label to add
+     * @returns - A promise of the new labels array
+     */
     addLabel:(id:string,label:string):Promise<string[]>=>{
       // Create the URI
       const request: string =APIRootPath + "/"+id+"/labels/"+ label;
@@ -82,6 +88,12 @@ export const createApiClient = (): ApiClient => {
       var labels:Promise<string[]> = axios.put(request).then((res)=>res.data);
       return labels;
     },
+    /**
+     * The function changes a ticket's title
+     * @param id - The ticket's id
+     * @param newTitle - The new title
+     * @returns - A promise of the new title
+     */
     changeTitle:(id:string,newTitle:string):Promise<string>=>{
       // Create the URI
       const request: string = APIRootPath + "/"+id+"/title/"+ newTitle;
