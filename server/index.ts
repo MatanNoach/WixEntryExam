@@ -3,7 +3,6 @@ import bodyParser = require("body-parser");
 import { tempData } from "./temp-data";
 import { serverAPIPort, APIPath, APIRootPath } from "@fed-exam/config";
 import { Ticket } from "../client/src/api";
-import e = require("express");
 
 const fs = require("fs");
 
@@ -25,6 +24,17 @@ app.use((_, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "*");
   next();
 });
+function filterTickets(tickets:Ticket[],search:string){
+  if(search!==""){
+  return tickets.filter((t) =>
+      (t.title.toLowerCase() + t.content.toLowerCase()).includes(
+        search.toLowerCase()
+      )
+    ); 
+  }else{
+    return tickets;
+  }
+}
 /**
  * The function sorts Tickets array inplace and returns the sorted Tickets
  * @param tickets - The tickets needs to be sorted
@@ -70,18 +80,22 @@ app.get(APIPath, (req, res) => {
   const page: number = parseInt(req.query.page as string);
   const sortBy: string = req.query.sortBy as string;
   const asc: number = parseInt(req.query.asc as string);
+  const search:string = req.query.search as string;
+  console.log(req.query)
+  // filter the data by search option
+  const filteredData = filterTickets(tempData,search);
+  // sort the data
+  const sortedData = sortTickets(filteredData, sortBy, asc);
   // get the data size and max number of pages
-  const dataSize = tempData.length;
-  const maxPage = Math.floor(tempData.length / PAGE_SIZE);
+  const dataSize = sortedData.length;
+  const maxPage = Math.ceil(sortedData.length / PAGE_SIZE);
   // get the page slice from the data
-  const paginatedData = tempData.slice(
+  const paginatedData = sortedData.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
-  // sort the data
-  const sortedData = sortTickets(paginatedData, sortBy, asc);
   // return a json file of the data, whole data size and max page number
-  res.json({ data: sortedData, dataSize: dataSize, maxPage: maxPage });
+  res.json({ data: paginatedData, dataSize: dataSize, maxPage: maxPage });
 });
 
 /**

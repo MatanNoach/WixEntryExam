@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-
+import React from "react";
 import "./App.scss";
 import { createApiClient, Ticket } from "./api";
 import CustomTicket from "./Ticket";
 import {Button} from "@material-ui/core";
+
 export type AppState = {
   tickets?: Ticket[];
   search: string;
@@ -30,6 +30,7 @@ export class App extends React.PureComponent<{}, AppState> {
   async componentDidMount() {
     this.setState({
       tickets: await api.getTickets(
+        this.state.search,
         this.state.page,
         this.state.sortBy,
         this.state.asc,
@@ -47,15 +48,11 @@ export class App extends React.PureComponent<{}, AppState> {
       });
     }
   };
-  renderTickets = (tickets: Ticket[]) => {    
-    const filteredTickets = tickets.filter((t) =>
-      (t.title.toLowerCase() + t.content.toLowerCase()).includes(
-        this.state.search.toLowerCase()
-      )
-    );    
+  renderTickets = (tickets: Ticket[]) => { 
+    console.log("state in render: " + this.state);  
     return (
-      <ul className="tickets" id="all_tickets">
-        {filteredTickets.map((ticket) => (
+      <ul className="tickets" id="tickets">
+        {tickets.map((ticket) => (
           <CustomTicket t={ticket}></CustomTicket>
         ))}
       </ul>
@@ -67,6 +64,7 @@ export class App extends React.PureComponent<{}, AppState> {
     this.searchDebounce = setTimeout(async () => {
       this.setState({
         search: val,
+        page: 1
       });
     }, 300);
   };
@@ -74,12 +72,14 @@ export class App extends React.PureComponent<{}, AppState> {
   async componentDidUpdate(prevProp: AppState, prevState: AppState) {    
     // if something has changed in the state
     if (
+      prevState.search!==this.state.search ||
+      prevState.page !== this.state.page ||
       prevState.sortBy !== this.state.sortBy ||
-      prevState.asc !== this.state.asc ||
-      prevState.page !== this.state.page
+      prevState.asc !== this.state.asc
     ) {
       // get the new tickets according to the state values
-      this.setState({ tickets: await api.getTickets(this.state.page,this.state.sortBy,this.state.asc)});
+      this.setState({ tickets: await api.getTickets(this.state.search,this.state.page,this.state.sortBy,this.state.asc,
+        (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize}))});
     }
   }
   showResultsNum(){

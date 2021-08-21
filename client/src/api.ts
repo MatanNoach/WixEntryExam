@@ -12,6 +12,7 @@ export type Ticket = {
 
 export type ApiClient = {
   getTickets: (
+    search: string,
     page: number,
     sortBy: string,
     isAsc: number,
@@ -43,10 +44,10 @@ export const createApiClient = (): ApiClient => {
      * @param callback - An optional callback function
      * @returns - A Promise of Ticket array 
      */
-    getTickets: (page: number, sortBy: string, asc: number, callback?: Function) => {
+    getTickets: (search:string,page: number, sortBy: string, asc: number, callback?: Function) => {
       // create the URI
       const request: string =
-        APIRootPath + "?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
+        APIRootPath +"?search="+search+ "&page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
       console.log(request);
       // Call the GET command and call the callback if exists
       var data: Promise<Ticket[]> = axios.get(request).then((res) => {

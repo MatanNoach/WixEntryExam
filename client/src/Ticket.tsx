@@ -1,5 +1,4 @@
 import React from "react";
-
 import "./App.scss";
 import { createApiClient, Ticket } from "./api";
 import { Button, Chip, Fab } from "@material-ui/core";
