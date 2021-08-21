@@ -20,7 +20,15 @@ export type ApiClient = {
   deleteLabel:(
     id:string,
     label:string
-  ) =>Promise<string[]>
+  ) =>Promise<string[]>,
+  addLabel:(
+    id:string,
+    label:string
+  )=>Promise<string[]>,
+  changeTitle:(
+    id:string,
+    newTitle:string
+  )=>Promise<string>,
 };
 
 
@@ -36,7 +44,7 @@ export const createApiClient = (): ApiClient => {
      * @returns - A Promise of Ticket array 
      */
     getTickets: (page: number, sortBy: string, asc: number, callback?: Function) => {
-      // create the URL
+      // create the URI
       const request: string =
         APIRootPath + "?page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
       console.log(request);
@@ -57,13 +65,29 @@ export const createApiClient = (): ApiClient => {
      * @param label - The label to delete
      * @returns - A Promise of the new labels array
      */
-    deleteLabel(id:string,label:string):Promise<string[]>{
-      // Create the URL
-      const request: string = APIRootPath + "/labels?id=" + id + "&label=" + label;
+    deleteLabel:(id:string,label:string):Promise<string[]>=>{
+      // Create the URI
+      const request: string =APIRootPath + "/"+id+"/labels/"+ label;
       console.log(request);
       // Call the DELETE command and return the labels
       var labels:Promise<string[]> = axios.delete(request).then((res)=>res.data);
       return labels;
+    },
+    addLabel:(id:string,label:string):Promise<string[]>=>{
+      // Create the URI
+      const request: string =APIRootPath + "/"+id+"/labels/"+ label;
+      console.log(request);
+      // Call the POST command and return the labels
+      var labels:Promise<string[]> = axios.put(request).then((res)=>res.data);
+      return labels;
+    },
+    changeTitle:(id:string,newTitle:string):Promise<string>=>{
+      // Create the URI
+      const request: string = APIRootPath + "/"+id+"/title/"+ newTitle;
+      console.log(request);
+      // Call the POST command and return the title
+      var title:Promise<string> = axios.put(request).then((res)=>res.data);
+      return title;
     }
   };
 };
