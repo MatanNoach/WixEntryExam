@@ -102,7 +102,7 @@ export class CustomTicket extends React.PureComponent<
           {this.state.title}
         </h5>
         {/* Task 1a + 1d - Display the ticket's content and show more/show less option*/}
-        <div id={"cd-"+this.props.t.id} style={{height:this.state.isTruncated?"80px":"auto",overflow:this.state.isTruncated?"hidden":"initial"}}>
+        <div id={"cd-"+this.props.t.id} style={{height:this.state.isTruncated?"80px":"auto",overflow:this.state.shouldTruncate?"hidden":"initial"}}>
         <p id={"c-"+this.props.t.id} style={{fontSize:"16px"}}>{this.props.t.content}</p>
         </div>
         <Link style={{visibility:this.state.shouldTruncate? "visible":"hidden"}} 

@@ -46,6 +46,23 @@ type SearchValues={
   labels?:string[];
 };
 /**
+ * The function compares 2 strings while ignoring uppercase/lowercase
+ * @param s1 - The first string
+ * @param s2 - The second string
+ * @returns 1 if s1>s2, -1 if s1<s2 and 0 equal
+ */
+function stringValueComparison(s1:string,s2:string):number{
+  const s1U = s1.toLocaleUpperCase();
+  const s2U = s2.toLocaleUpperCase();
+  if(s1U>s2U){
+    return 1;
+  }
+  if(s1U<s2U){
+    return -1;
+  }
+  return 0;
+}
+/**
  * The function parses a search line, parses it and returns the SearchValues objects represents it 
  * @param search - The search line
  * @returns - A SearchValues object
@@ -116,7 +133,9 @@ function filterTickets(tickets: Ticket[], search: string) {
         if (searchValues.labels) {
           if (
             !t.labels ||
-            !searchValues.labels.every((label) => t.labels?.includes(label))
+            // check if for every label in the search option, has at least one match in the ticket's label array
+            !searchValues.labels.every((label) => t.labels?.some(
+              (compareLabel)=>stringValueComparison(label,compareLabel)==0? true:false))
           ) {
             flag = false;
           }
@@ -140,29 +159,11 @@ function filterTickets(tickets: Ticket[], search: string) {
  */
 function sortTickets(tickets: Ticket[], sortBy: string, asc: number) {
   if (sortBy == "email") {
-    tickets.sort(function (a, b) {
-      var aEmail = a.userEmail.toUpperCase();
-      var bEmail = b.userEmail.toUpperCase();
-      if (aEmail > bEmail) {
-        return 1 * asc;
-      } else if (aEmail < bEmail) {
-        return -1 * asc;
-      }
-      return 0;
-    });
+    tickets.sort((a,b)=>stringValueComparison(a.userEmail,b.userEmail)*asc);
   } else if (sortBy == "date") {
     tickets.sort((a, b) => (a.creationTime - b.creationTime) * asc);
   } else if (sortBy == "title") {
-    tickets.sort(function (a, b) {
-      var aTitle = a.title.toUpperCase();
-      var bTitle = b.title.toUpperCase();
-      if (aTitle > bTitle) {
-        return 1 * asc;
-      } else if (aTitle < bTitle) {
-        return -1 * asc;
-      }
-      return 0;
-    });
+    tickets.sort((a,b)=> stringValueComparison(a.title,b.title)*asc);
   }
   return tickets;
 }
@@ -176,7 +177,7 @@ app.get(APIPath, (req, res) => {
   const sortBy: string = req.query.sortBy as string;
   const asc: number = parseInt(req.query.asc as string);
   const search: string = req.query.search as string;
-  // filter the data by search option
+  // Task 2b: filter the data by search option
   const filteredData = filterTickets(tempData, search);
   // sort the data
   const sortedData = sortTickets(filteredData, sortBy, asc);
