@@ -36,19 +36,30 @@ export class App extends React.PureComponent<{}, AppState> {
    */
   sortTickets = (sortType: string) => {
     if (this.state.sortBy !== sortType) {
-      this.setState({ sortBy: sortType, asc: 1 });
+      this.setState({ sortBy: sortType, asc: 1,page:1 });
     } else {
       this.setState((prevState: AppState) => {
-        return { asc: prevState.asc * -1 };
+        return { asc: prevState.asc * -1,page:1 };
       });
     }
   };
+  setLabelInSearch=(label:string)=>{
+    var newSearch:string;
+    if(this.state.search.includes("labels:")){
+      const index = this.state.search.indexOf("labels:")+"labels:".length;
+      newSearch = this.state.search.slice(0,index)+label+','+this.state.search.slice(index);
+    }else{
+      newSearch = "labels:"+label+" "+this.state.search;
+    }
+    (document.getElementById("searchBar") as HTMLInputElement).value = newSearch;
+    this.setState({search:newSearch});
+  }
   renderTickets = (tickets: Ticket[]) => { 
     console.log("state in render: " + this.state);  
     return (
       <ul className="tickets" id="tickets">
         {tickets.map((ticket) => (
-          <CustomTicket t={ticket}></CustomTicket>
+          <CustomTicket t={ticket} setLabelInSearch={this.setLabelInSearch}></CustomTicket>
         ))}
       </ul>
     );
@@ -95,6 +106,7 @@ export class App extends React.PureComponent<{}, AppState> {
         <h1>Tickets List</h1>
         <header>
           <input
+            id="searchBar"
             type="search"
             placeholder="Search..."
             onChange={(e) => this.onSearch(e.target.value)}

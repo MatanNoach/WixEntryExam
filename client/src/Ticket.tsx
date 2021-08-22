@@ -5,6 +5,7 @@ import { Button, Chip, Fab, Link } from "@material-ui/core";
 
 type CustomProps = {
   t: Ticket;
+  setLabelInSearch:Function;
 };
 type CustomState = {
   title: string;
@@ -61,8 +62,16 @@ export class CustomTicket extends React.PureComponent<
   handleAdd = async () => {
     // get a new label
     var newLabel = String(prompt("Type new label"));
+    // prevent label with ':' so it won't harm the parsing later
+    while(newLabel.includes(':')){
+      alert("Label can't contain : ")
+      newLabel = String(prompt("Type new label"));
+    }
+    if(this.state.labels?.some((compareLabel)=>newLabel.toUpperCase()===compareLabel.toUpperCase())){
+      alert("This label already exists in this ticket")
+    }
     // add the new label if it's not null or empty
-    if (newLabel !== "null" && newLabel !== "") {
+    else if (newLabel !== "null" && newLabel !== "") {
       this.setState({ labels: await api.addLabel(this.props.t.id, newLabel) });
     }
   };
@@ -130,6 +139,7 @@ export class CustomTicket extends React.PureComponent<
               <Chip
                 color="primary"
                 variant="outlined"
+                onClick={()=>this.props.setLabelInSearch(label)}
                 onDelete={() => this.handleDelete(label)}
                 label={label}
               ></Chip>
