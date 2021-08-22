@@ -1,17 +1,15 @@
 import React from "react";
 import "./App.scss";
-import { createApiClient, Ticket } from "./api";
+import { createApiClient, Ticket,TicketsData } from "./api";
 import CustomTicket from "./Ticket";
 import {Button} from "@material-ui/core";
 
 export type AppState = {
-  tickets?: Ticket[];
+  ticketsData?:TicketsData;
   search: string;
   sortBy: string;
   asc: number;
-  page: number;
-  maxPage:number;
-  dataSize:number;
+  page: number;  
 };
 const PAGE_SIZE:number = 20;
 const api = createApiClient();
@@ -22,19 +20,13 @@ export class App extends React.PureComponent<{}, AppState> {
     sortBy: "none",
     asc: 1,
     page: 1,
-    maxPage:0,
-    dataSize:0
   };
   searchDebounce: any = null;
 
   async componentDidMount() {
     this.setState({
-      tickets: await api.getTickets(
-        this.state.search,
-        this.state.page,
-        this.state.sortBy,
-        this.state.asc,
-        (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize})
+      ticketsData: await api.getTickets(
+        this.state
       ),
     });    
   }
@@ -81,22 +73,23 @@ export class App extends React.PureComponent<{}, AppState> {
       prevState.asc !== this.state.asc
     ) {
       // get the new tickets according to the state values
-      this.setState({ tickets: await api.getTickets(this.state.search,this.state.page,this.state.sortBy,this.state.asc,
-        (newDataSize:number,newMaxPage:number)=>this.setState({maxPage:newMaxPage,dataSize:newDataSize}))});
+      this.setState({ ticketsData: await api.getTickets(this.state)});
     }
   }
   /**
    * @returns - The function returns the propper line that displays the result
    */
   getResultsLine(){
-    const { tickets } = this.state;
+    const { ticketsData: tickets } = this.state;
     const bottomNum = tickets ? PAGE_SIZE*(this.state.page-1): 0;
-    const topNum = tickets ? tickets.length+PAGE_SIZE*(this.state.page-1): 0;
-    const result = "Showing "+bottomNum+"-"+topNum+" results out of "+this.state.dataSize;    
+    const topNum = tickets?.data? tickets.data.length+PAGE_SIZE*(this.state.page-1): 0;
+    const result = "Showing "+bottomNum+"-"+topNum+" results out of "+this.state.ticketsData?.dataSize;    
     return result;
   }
   render() {
-    const { tickets } = this.state;
+    const tickets = this.state.ticketsData?.data;
+    console.log("state: ",this.state)
+    console.log("tickets: ",this.state.ticketsData?.data)
     return (
       <main>
         <h1>Tickets List</h1>
@@ -157,7 +150,7 @@ export class App extends React.PureComponent<{}, AppState> {
               variant="contained"
               color="primary"
               onClick={() => {
-                if(this.state.page<this.state.maxPage){
+                if(this.state.page<(this.state.ticketsData? this.state.ticketsData.maxPage:0)){
                 this.setState((prevState: AppState) => {
                   return { page: prevState.page + 1 };
                 });

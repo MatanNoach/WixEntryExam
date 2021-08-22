@@ -1,5 +1,6 @@
 import axios from "axios";
 import { APIRootPath } from "@fed-exam/config";
+import { AppState } from "./App";
 
 export type Ticket = {
   id: string;
@@ -9,15 +10,15 @@ export type Ticket = {
   userEmail: string;
   labels?: string[];
 };
-
+export type TicketsData = {
+  data?: Ticket[];
+  maxPage:number;
+  dataSize:number;
+}
 export type ApiClient = {
   getTickets: (
-    search: string,
-    page: number,
-    sortBy: string,
-    isAsc: number,
-    callback?: Function
-  ) => Promise<Ticket[]>,
+    appState:AppState
+  ) => Promise<TicketsData>,
   deleteLabel:(
     id:string,
     label:string
@@ -44,18 +45,15 @@ export const createApiClient = (): ApiClient => {
      * @param callback - An optional callback function
      * @returns - A Promise of Ticket array 
      */
-    getTickets: (search:string,page: number, sortBy: string, asc: number, callback?: Function) => {
+    getTickets: (appState:AppState) => {
       // create the URI
       const request: string =
-        APIRootPath +"?search="+search+ "&page=" + page + "&sortBy=" + sortBy + "&asc=" + asc;
+        APIRootPath +"?search="+appState.search+ "&page=" + appState.page + "&sortBy=" + appState.sortBy + "&asc=" + appState.asc;
       console.log(request);
       // Call the GET command and call the callback if exists
-      var data: Promise<Ticket[]> = axios.get(request).then((res) => {
-        if(callback){
-          callback(res.data.dataSize,res.data.maxPage);
-        }
-        return res.data.data;
-      });
+      var data: Promise<TicketsData> = axios.get(request).then((res) => {
+        console.log(res.data);
+        return res.data});
       // return the data
       return data;
     },
