@@ -5,7 +5,7 @@ import { Button, Chip, Fab, Link } from "@material-ui/core";
 
 type CustomProps = {
   t: Ticket;
-  setLabelInSearch:Function;
+  setValueInSearch:Function;
 };
 type CustomState = {
   title: string;
@@ -120,8 +120,9 @@ export class CustomTicket extends React.PureComponent<
         </Link>
         <footer>
           <div className="meta-data">
-            By {this.props.t.userEmail} | {" "}
-            {new Date(this.props.t.creationTime).toLocaleString()}
+            By <Link onClick={()=>this.props.setValueInSearch(this.props.t.userEmail,"email")}>{this.props.t.userEmail}</Link> 
+           {" "} | {" "}
+           {new Date(this.props.t.creationTime).toLocaleString()}
           </div>
           {/* Task 1c - Display ticket's labels*/}
           <div style={{ float: "right", fontSize: 10 }}>
@@ -139,7 +140,7 @@ export class CustomTicket extends React.PureComponent<
               <Chip
                 color="primary"
                 variant="outlined"
-                onClick={()=>this.props.setLabelInSearch(label)}
+                onClick={()=>this.props.setValueInSearch(label,"label")}
                 onDelete={() => this.handleDelete(label)}
                 label={label}
               ></Chip>

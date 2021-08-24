@@ -7,7 +7,9 @@
     "creationTime": 1515422235407,
     "labels": [
       "filtering",
-      "table"
+      "table",
+      "another",
+      "sdfs"
     ]
   },
   {
@@ -29,7 +31,10 @@
     "title": "Improve responsiveness on payment page",
     "content": " Hi team,\n\nAnother post to try and improve my coding skills and make some of the site more responsive. I have a ton of code to check the validity on my paymnet page, it seems at times to slow down user input when typing (all the usual stuff has been done with cookies, the latest version of Chrome etc)\n\nI think maybe if I improve the code it may help? I have spoken to the Wix team and they are looking into this at their end also.\n\nAnyway, below I have some code for 2 participants, which with more people the code size increases... I have 8 spaces, so you can imagine how much code there is... \n\nI have played with functions within function to reduce but it behaves oddly.. this code is the only way, so far that it works as expected.\n\n\nThank you!\nlet validationMessage = \"\"\n\nfunction participant1(){\n if (!$w('#medicalsOne').value) validationMessage += 'Participant 1 - If no medicals, please enter None\\n';\n if (!$w('#ECNameOne').value) validationMessage += 'Participant 1 - Please enter emergency contact name\\n';\n if (!$w('#ECNumbOne').value) validationMessage += 'Participant 1 - Please enter emergency contact number\\n';\n if (!$w('#datePicker1').value) validationMessage += 'Participant 1 - Please enter DOB\\n';\n if (!$w('#groupExperience').value) validationMessage += 'Please provide a brief overview of your/groups expereince\\n';\n if (!$w('#courseAims').value) validationMessage += 'Please provide a brief aim of your trip/course\\n';\n    $w('#validationMessageDetails').text = validationMessage;\n    $w('#validationMessageDetails').expand();\n}\n\nfunction participant2(){\n if (!$w('#medicalsOne').value) validationMessage += 'Participant 1 - If no medicals, please enter None\\n';\n if (!$w('#ECNameOne').value) validationMessage += 'Participant 1 - Please enter emergency contact name\\n';\n if (!$w('#ECNumbOne').value) validationMessage += 'Participant 1 - Please enter emergency contact number\\n';\n if (!$w('#datePicker1').value) validationMessage += 'Participant 1 - Please enter DOB\\n';\n if (!$w('#nameTwo').value) validationMessage += 'Participant 2 - Please enter a name\\n';\n if (!$w('#contactNumbTwo').value) validationMessage += 'Participant 2 - Please enter contact number\\n';\n if (!$w('#medicalsTwo').value) validationMessage += 'Participant 2 - If no medicals, please enter None\\n';\n if (!$w('#ECNameTwo').value) validationMessage += 'Participant 2 - Please enter emergency contact name\\n';\n if (!$w('#ECNumbTwo').value) validationMessage += 'Participant 2 - Please enter emergency contact number\\n';\n if (!$w('#datePicker2').value) validationMessage += 'Participant 2 - Please enter DOB\\n';\n if (!$w('#groupExperience').value) validationMessage += 'Please provide a brief overview of your/groups expereince\\n';\n if (!$w('#courseAims').value) validationMessage += 'Please provide a brief aim of your trip/course\\n';\n    $w('#validationMessageDetails').text = validationMessage;\n    $w('#validationMessageDetails').expand();\n}\n \n\nif ($w('#participants').value === '1') {\n    participant1()\n if ($w(\"#medicalsOne\").value && $w('#ECNameOne').value && $w('#datePicker1').value && $w('#ECNumbOne').value\n    && $w('#groupExperience').value && $w('#courseAims').value) showOrder();\n    }\n    \n    \n if ($w('#participants').value === '2'){\n    participant2()\n if ($w(\"#medicalsOne\").value && $w('#ECNameOne').value && $w('#datePicker1').value && $w('#ECNumbOne').value \n    && $w(\"#nameTwo\").value && $w('#contactNumbTwo').value && $w('#medicalsTwo').value && $w('#ECNameTwo').value && $w('#ECNumbTwo').value && $w('#datePicker2').value\n    && $w('#groupExperience').value && $w('#courseAims').value) showOrder();\n    }\n",
     "userEmail": "ajim@rogden.mm",
-    "creationTime": 1522689712251
+    "creationTime": 1522689712251,
+    "labels": [
+      "test"
+    ]
   },
   {
     "id": "87f1a0e9-c30d-5245-aada-603bd3984597",
@@ -268,7 +273,10 @@
     "title": "Dropdown input on dynamic page with backend query",
     "content": "Hi,\n\nI was wondering if someone would be able to point me in the direction of why I can't get the below code to filter with the dropdowns?\n\nI have been trying to improve the sites speed and responsiveness and have been trying to use the backend for multiple queries.\n\nNote: pageTitle is the field key for the grades.\n\nBack end\nimport wixData from 'wix-data';\nimport wixUsersBackend from 'wix-users-backend';\n\nexport function getSearch(field, test) {\n let query = wixData.query(\"Courses\");\n if(test.length > 0) {\n        query = query.contains(field, test);\n    }\n return query.find();\n}\nFront end\n \nimport {getSearch} from 'backend/utilitiesModule';\n\nexport function searchButton_click(event) {\n//$w('#regionDropdown').value = \"all\";  \nlet categoryValue = $w('#dynamicDataset').getCurrentItem().title;\nlet gradeValue = $w('#gradeDropdown').value;\nlet regionValue = $w('#regionDropdown').value;\n    console.log(regionValue)\n    console.log(gradeValue)\n    console.log(categoryValue)\n    getSearch(\"coursesCategory\", categoryValue && \"pageTitle\", gradeValue ).then(function (resp) {\n let items = resp.items;\n let courses = [];\n        items.forEach(function (item) {\n let course = { \"coursesCategory\": item.coursesCategory, \"rating\": item.rating, \"_id\": item._id, \"title\": item.title, \"image\": item.image, \"duration\": item.duration, \"individaulPrice\": item.individaulPrice, \"lightbox\": item.lightbox, \"prices\": item.prices, \"description\": item.description, \"count\": item.count };\n            courses.push(course);\n        });\n        $w('#repeater1').scrollTo();\n        $w(\"#repeater1\").data = []; \n        $w(\"#repeater1\").data = courses; \n    });\n    $w(\"#gradeDropdownTwo\").value = $w('#gradeDropdown').value;\n    $w(\"#regionDropdownTwo\").value = $w('#regionDropdown').value;\n\n}\nI have working code \ngetSearch(\"pageTitle\", gradeValue ).then\nbut on the dynamic page all of the grades for all trips show not just what is relevant to the current page i.e. rock climbing it would show every trip from hiking, holidays, canoeing etc\nso I tried this line but it doesn't seem to work but no errors. \ngetSearch(\"coursesCategory\", categoryValue && \"pageTitle\", gradeValue ).then\nIn the end, I'm looking to combine two dropdowns, grade and region and the relevant trip category to display the appropriate trips on the dynamic page.\n\nThank you!",
     "userEmail": "defofu@upbuk.com",
-    "creationTime": 1530023138742
+    "creationTime": 1530023138742,
+    "labels": [
+      "test"
+    ]
   },
   {
     "id": "4a8e9c43-4acb-5e3b-b045-b5beb57f9e10",
@@ -388,7 +396,11 @@
     "title": "Updating specific fields",
     "content": "Someone has asked recently (I don't remember who) how to update specific fields of a record without having to pull all the other fields to the front end.\nSo I've posted a simple (a little bit trivial) solution here:\n https://jonatandor35.wixsite.com/test/post/how-to-update-specific-fields  ",
     "userEmail": "fusjohwi@cut.gh",
-    "creationTime": 1533693592458
+    "creationTime": 1533693592458,
+    "labels": [
+      "test",
+      "test 2"
+    ]
   },
   {
     "id": "a18f9ec1-cc1d-5f58-ae85-e2c3cee90b27",
@@ -451,7 +463,10 @@
     "title": "Link database to services\n",
     "content": " \nHello!\nI'm looking for an orientation. If I'm not in the proper place feel comfortable to delete.\nI want to create a plataform or something in this way where I could connect a service to a visitor; acting between many professionals that will constantly update their content and possible clients (visitors until then), intermediating both.\nSo for that I was thinking in use a database linked to dynamic pages and offering a possibility to the visitor to hire that service in a automated way through the website.\nIs that a possible and good a ideia to do in the plataform? Do you suggest using Corvid for any function or the editor is enough? It should fit well in a member's area? Suggestions are very welcome. https://192168ll.onl/ https://xender.vip/ https://testmyspeed.onl/\nThanks in advance!",
     "userEmail": "he@cud.mc",
-    "creationTime": 1518074759400
+    "creationTime": 1518074759400,
+    "labels": [
+      "test 2"
+    ]
   },
   {
     "id": "1d23fcbf-5105-5d72-988a-63c9f4ade6b2",
@@ -486,7 +501,10 @@
     "title": "Decreased mobile load time by 15+seconds with preload key request but still have small error",
     "content": "TLDR - Is there ANY other way to do a preload key request with wix. PLEASE! It shaves off so much time it's insane.\n\nSo running the google pagespeed test, it tells me to use preload key requests to speed up the website.  \"Preload key requests 14.04 s Consider using <link rel=preload> to prioritize fetching resources that are currently requested later in page load.\"\n\nIt literally would increase page load time by 14 seconds, which is ridiculous. \n\nI was able to pop this code line into the 'tracking and analytics' because that's the easiest way to get an html code on all pages. <link rel='preload' href=\"https://www.hydrochemsystems.com/_partials/wix-bolt/1.2670.0/node_modules/santa-wix-code/dist/bolt-worker.js>\n\nIt works on every page except the home page. The number within the code \"1.2670.0\" does seem to change, and I wonder if there's a preload request that's more basic that wouldn't change. It also shows code at the top of the pages when switch between them or on a refresh, causing the menu bar to disappear. \n\nI've tried \"<link rel='preload' href=\"https://www.hydrochemsystems.com/_partials/wix-bolt/1.2687.0/node_modules/santa-wix-code/dist/bolt-worker.js\" as=\"script\">\" but google says \n\n Warnings: A preload <link> was found for \"https://www.hydrochemsystems.com/_partials/wix-bolt/1.2687.0/node_modules/santa-wix-code/dist/bolt-worker.js\" but was not used by the browser. Check that you are using the `crossorigin` attribute properly. \n\nI've tried the crossorigin as crossorigin, crossorigin=\"anonymous\" crossorigin=\"\" and crossorigin=\"use-credentials\".\n\nI don't know what else to do but this is a massive game changer if I can just get it to work and not mess up the refresh.\n \n \n\n\n",
     "userEmail": "icaska@ajpupmot.bv",
-    "creationTime": 1540678844782
+    "creationTime": 1540678844782,
+    "labels": [
+      "test 2"
+    ]
   },
   {
     "id": "6358ae3f-0eb4-5bea-aae2-dd358e0c3988",
