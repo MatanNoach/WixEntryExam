@@ -52,72 +52,103 @@ export class App extends React.PureComponent<{}, AppState> {
     this.setState({ search: value });
   };
   /**
+   * The function adds/removes a value to a multi-value search type in the search bar
+   * NOTE - multi-value type can hold a list of values seperated by ','
+   * @param value - The value to add/remove
+   * @param type - The type of the value 
+   */
+  updateListInSearch = (value: string, type: string) => {
+    var newSearch:string;
+    // if the type already exist
+    if (this.state.search.includes(type + ":")) {
+      // get it's position in the string
+      const startIndex = this.state.search.indexOf(type + ":");
+      var lastIndex = this.state.search.indexOf(" ", startIndex);
+      if (lastIndex === -1) {
+        lastIndex = this.state.search.length;
+      }
+      // get all values already in the search
+      var labels: string[] = this.state.search
+        .slice(startIndex + (type + ":").length, lastIndex)
+        .split(",");
+      // if the value is in the list - remove it
+      if (labels.includes(value)) {
+        labels = labels.filter((l) => l !== value);
+        if (labels.length !== 0) {
+          const newLabels: string = type + ":" + labels.join(",");
+          newSearch = this.state.search.replace(
+            this.state.search.slice(startIndex, lastIndex),
+            newLabels
+          );
+        } else {
+          newSearch =
+            this.state.search.slice(0, startIndex) +
+            this.state.search.slice(lastIndex + 1);
+        }
+      } else {
+        // else - add the new value to the search
+        const index = startIndex + (type + ":").length;
+        newSearch =
+          this.state.search.slice(0, index) +
+          value +
+          "," +
+          this.state.search.slice(index);
+      }
+    } else {
+      // else - add the new value to the search
+      newSearch = type + ":" + value + " " + this.state.search;
+    }
+    this.replaceSearchValue(newSearch);
+  };
+  /**
+   * The function adds/removes a single-value search type in the search bar 
+   * NOTE - single value type can only search one value at a time. e.g. email, after, or before
+   * @param value - The value to add/remove
+   * @param type - The type of the value
+   * @param text - An optional value in case the type is represented differently in the search bar. 
+   * e.g. 'email' is searched as 'from'
+   */
+  updateSingleInSearch=(value:string,type:string,text?:string)=>{
+    var typeAsText = ""; 
+    if(text){
+      typeAsText = text;
+    }else{
+      typeAsText = type;
+    }
+    var newSearch="";
+    // if the type already exists in the search bar
+    if (this.state.search.includes(typeAsText+":")) {
+      // if it is the same as current value - remove it
+      if (this.state.search.includes(typeAsText+":" + value)) {
+        const startIndex = this.state.search.indexOf(typeAsText+":" + value);
+        var lastIndex = this.state.search.indexOf(" ", startIndex);
+        if (lastIndex === -1) {
+          lastIndex = this.state.search.length;
+        }
+        newSearch =
+          this.state.search.slice(0, startIndex) +
+          this.state.search.slice(lastIndex + 1);
+        this.replaceSearchValue(newSearch);
+      } else {
+        // else - print an error message to the user
+        alert("You can only search one "+type);
+      }
+    } else {
+      // else - add it to the search bar
+      newSearch = typeAsText+":" + value + " " + this.state.search;
+      this.replaceSearchValue(newSearch);
+    }
+  }
+  /**
    * The function updates the value in the search bar by another value given from the user
    * @param value - The value given from the user
    * @param type - The type of the value
    */
   updateValueInSearch = (value: string, type: string) => {
-    var newSearch: string;
     if (type === "label") {
-      // if 'labels:' already exist 
-      if (this.state.search.includes("labels:")) {
-        // get it's position in the string
-        const startIndex = this.state.search.indexOf("labels:");
-        var lastIndex = this.state.search.indexOf(" ", startIndex);
-        if (lastIndex === -1) {
-          lastIndex = this.state.search.length;
-        }
-        // get all labels already in the search
-        var labels: string[] = this.state.search
-          .slice(startIndex + "labels:".length, lastIndex)
-          .split(",");
-          // if the value is there - remove it
-        if (labels.includes(value)) {
-          labels = labels.filter((l) => l !== value);
-          if (labels.length !== 0) {
-            const newLabels: string = "labels:" + labels.join(",");
-            newSearch = this.state.search.replace(
-              this.state.search.slice(startIndex, lastIndex),
-              newLabels
-            );
-          } else {
-            newSearch =
-              this.state.search.slice(0, startIndex) +
-              this.state.search.slice(lastIndex + 1);
-          }
-        } else { // else - add the new label to the search
-          const index = startIndex + "labels:".length;
-          newSearch =
-            this.state.search.slice(0, index) +
-            value +
-            "," +
-            this.state.search.slice(index);
-        }
-      } else { // else - add the new label to the search
-        newSearch = "labels:" + value + " " + this.state.search;
-      }
-      this.replaceSearchValue(newSearch);
-    } else if (type === "email") { 
-      // if an email already exists in the search bar
-      if (this.state.search.includes("from:")) {
-        // if it is the same as current email - remove it
-        if (this.state.search.includes("from:" + value)) {
-          const startIndex = this.state.search.indexOf("from:" + value);
-          var lastIndex = this.state.search.indexOf(" ", startIndex);
-          if (lastIndex === -1) {
-            lastIndex = this.state.search.length;
-          }
-          newSearch =
-            this.state.search.slice(0, startIndex) +
-            this.state.search.slice(lastIndex + 1);
-          this.replaceSearchValue(newSearch);
-        } else { // else - print an error message to the user 
-          alert("You can only search one email");
-        }
-      } else {// else - add the email to the search bar
-        newSearch = "from:" + value + " " + this.state.search;
-        this.replaceSearchValue(newSearch);
-      }
+      this.updateListInSearch(value, "labels");
+    } else if (type === "email") {
+      this.updateSingleInSearch(value,"email","from");
     }
   };
   renderTickets = (tickets: Ticket[]) => {
