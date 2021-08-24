@@ -1,17 +1,19 @@
 import React from "react";
 import "./App.scss";
-import { createApiClient, Ticket,TicketsData } from "./api";
+import { createApiClient, Ticket, TicketsData } from "./api";
 import CustomTicket from "./Ticket";
-import {Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 
 export type AppState = {
-  ticketsData?:TicketsData;
+  ticketsData?: TicketsData;
   search: string;
   sortBy: string;
   asc: number;
-  page: number;  
+  page: number;
 };
-const PAGE_SIZE:number = 20;
+const PAGE_SIZE: number = 20;
 const api = createApiClient();
 
 export class App extends React.PureComponent<{}, AppState> {
@@ -25,10 +27,8 @@ export class App extends React.PureComponent<{}, AppState> {
 
   async componentDidMount() {
     this.setState({
-      ticketsData: await api.getTickets(
-        this.state
-      ),
-    });    
+      ticketsData: await api.getTickets(this.state),
+    });
   }
   /**
    * The function calls the server to sort the tickets by sort type
@@ -36,71 +36,87 @@ export class App extends React.PureComponent<{}, AppState> {
    */
   sortTickets = (sortType: string) => {
     if (this.state.sortBy !== sortType) {
-      this.setState({ sortBy: sortType, asc: 1,page:1 });
+      this.setState({ sortBy: sortType, asc: 1, page: 1 });
     } else {
       this.setState((prevState: AppState) => {
-        return { asc: prevState.asc * -1,page:1 };
+        return { asc: prevState.asc * -1, page: 1 };
       });
     }
   };
-  setLabelInSearch=(label:string)=>{
-    var newSearch:string;
-    if(this.state.search.includes("labels:")){
-      const index = this.state.search.indexOf("labels:")+"labels:".length;
-      newSearch = this.state.search.slice(0,index)+label+','+this.state.search.slice(index);
-    }else{
-      newSearch = "labels:"+label+" "+this.state.search;
+  setLabelInSearch = (label: string) => {
+    var newSearch: string;
+    if (this.state.search.includes("labels:")) {
+      const index = this.state.search.indexOf("labels:") + "labels:".length;
+      newSearch =
+        this.state.search.slice(0, index) +
+        label +
+        "," +
+        this.state.search.slice(index);
+    } else {
+      newSearch = "labels:" + label + " " + this.state.search;
     }
-    (document.getElementById("searchBar") as HTMLInputElement).value = newSearch;
-    this.setState({search:newSearch});
-  }
-  renderTickets = (tickets: Ticket[]) => { 
-    console.log("state in render: " + this.state);  
+    (document.getElementById("searchBar") as HTMLInputElement).value =
+      newSearch;
+    this.setState({ search: newSearch });
+  };
+  renderTickets = (tickets: Ticket[]) => {
+    console.log("state in render: " + this.state);
     return (
       <ul className="tickets" id="tickets">
         {tickets.map((ticket) => (
-          <CustomTicket t={ticket} setLabelInSearch={this.setLabelInSearch}></CustomTicket>
+          <CustomTicket
+            t={ticket}
+            setLabelInSearch={this.setLabelInSearch}
+          ></CustomTicket>
         ))}
       </ul>
     );
   };
 
-  onSearch = async (val: string, newPage?: number) => {
+  onSearch = async (val: string) => {
     clearTimeout(this.searchDebounce);
     this.searchDebounce = setTimeout(async () => {
       this.setState({
         search: val,
-        page: 1
+        page: 1,
       });
     }, 300);
   };
 
-  async componentDidUpdate(prevProp: AppState, prevState: AppState) {    
+  async componentDidUpdate(prevProp: AppState, prevState: AppState) {
     // if specific values have changed in the state
     if (
-      prevState.search!==this.state.search ||
+      prevState.search !== this.state.search ||
       prevState.page !== this.state.page ||
       prevState.sortBy !== this.state.sortBy ||
       prevState.asc !== this.state.asc
     ) {
       // get the new tickets according to the state values
-      this.setState({ ticketsData: await api.getTickets(this.state)});
+      this.setState({ ticketsData: await api.getTickets(this.state) });
     }
   }
   /**
    * @returns - The function returns the propper line that displays the result
    */
-  getResultsLine(){
+  getResultsLine() {
     const { ticketsData: tickets } = this.state;
-    const bottomNum = tickets ? PAGE_SIZE*(this.state.page-1): 0;
-    const topNum = tickets?.data? tickets.data.length+PAGE_SIZE*(this.state.page-1): 0;
-    const result = "Showing "+bottomNum+"-"+topNum+" results out of "+this.state.ticketsData?.dataSize;    
+    const bottomNum = tickets ? PAGE_SIZE * (this.state.page - 1) + 1 : 1;
+    const topNum = tickets?.data
+      ? tickets.data.length + PAGE_SIZE * (this.state.page - 1)
+      : 0;
+    const result =
+      "Showing " +
+      bottomNum +
+      "-" +
+      topNum +
+      " results out of " +
+      this.state.ticketsData?.dataSize;
     return result;
   }
   render() {
     const tickets = this.state.ticketsData?.data;
-    console.log("state: ",this.state)
-    console.log("tickets: ",this.state.ticketsData?.data)
+    console.log("state: ", this.state);
+    console.log("tickets: ", this.state.ticketsData?.data);
     return (
       <main>
         <h1>Tickets List</h1>
@@ -112,6 +128,9 @@ export class App extends React.PureComponent<{}, AppState> {
             onChange={(e) => this.onSearch(e.target.value)}
           />
         </header>
+        <div className="hint" style={{ fontSize: 12 }}>
+          hint - you can use label filtering by clicking on the label
+        </div>
         {/* Task 3 - Display result found to the user */}
         {tickets ? (
           <div className="results">{this.getResultsLine()}</div>
@@ -125,6 +144,11 @@ export class App extends React.PureComponent<{}, AppState> {
               onClick={() => this.sortTickets("date")}
             >
               Sort By Date
+              {this.state.sortBy === "date" && this.state.asc === 1 ? (
+                <ArrowUpwardIcon />
+              ) : this.state.sortBy === "date" && this.state.asc === -1 ? (
+                <ArrowDownwardIcon />
+              ) : null}
             </Button>
             &nbsp;
             <Button
@@ -133,6 +157,11 @@ export class App extends React.PureComponent<{}, AppState> {
               onClick={() => this.sortTickets("title")}
             >
               Sort By Title
+              {this.state.sortBy === "title" && this.state.asc == 1 ? (
+                <ArrowUpwardIcon />
+              ) : this.state.sortBy === "title" && this.state.asc == -1 ? (
+                <ArrowDownwardIcon />
+              ) : null}
             </Button>
             &nbsp;
             <Button
@@ -141,38 +170,74 @@ export class App extends React.PureComponent<{}, AppState> {
               onClick={() => this.sortTickets("email")}
             >
               Sort By Email
-            </Button>
-          </div>
-          <div className="page_buttons" style={{ float: "right" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                if (this.state.page > 1) {
-                  this.setState((prevState: AppState) => {
-                    return { page: prevState.page - 1 };
-                  });
-                }
-              }}
-            >
-              previous
-            </Button>
-            &nbsp;
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                if(this.state.page<(this.state.ticketsData? this.state.ticketsData.maxPage:0)){
-                this.setState((prevState: AppState) => {
-                  return { page: prevState.page + 1 };
-                });
-              }
-              }}
-            >
-              next
+              {this.state.sortBy === "email" && this.state.asc == 1 ? (
+                <ArrowUpwardIcon />
+              ) : this.state.sortBy === "email" && this.state.asc == -1 ? (
+                <ArrowDownwardIcon />
+              ) : null}
             </Button>
           </div>
         </div>
+          <div style={{ float: "right" }}>
+            <div className="page_search">
+              <input
+                type="text"
+                value={this.state.page}
+                onChange={(e) => {
+                  if (e.target.value !== "") {
+                    const newPage: number = parseInt(e.target.value);
+                    console.log(newPage);
+                    if (this.state.ticketsData) {
+                      if (
+                        newPage <= this.state.ticketsData.maxPage &&
+                        newPage >= 1
+                      ) {
+                        this.setState({ page: newPage });
+                      } else {
+                        alert("Invalid page number!");
+                      }
+                    }
+                  }
+                }}
+                min="1"
+                max={this.state.ticketsData?.maxPage}
+              />
+            </div>
+            <div className="page_buttons">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (this.state.page > 1) {
+                    this.setState((prevState: AppState) => {
+                      return { page: prevState.page - 1 };
+                    });
+                  }
+                }}
+              >
+                previous
+              </Button>
+              &nbsp;
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (
+                    this.state.page <
+                    (this.state.ticketsData
+                      ? this.state.ticketsData.maxPage
+                      : 0)
+                  ) {
+                    this.setState((prevState: AppState) => {
+                      return { page: prevState.page + 1 };
+                    });
+                  }
+                }}
+              >
+                next
+              </Button>
+            </div>
+          </div>
         <ul className="ticket_list"></ul>
         {tickets ? this.renderTickets(tickets) : <h2>Loading..</h2>}
       </main>
