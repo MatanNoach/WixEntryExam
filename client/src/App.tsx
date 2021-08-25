@@ -71,6 +71,8 @@ export class App extends React.PureComponent<{}, AppState> {
       var labels: string[] = this.state.search
         .slice(startIndex + (type + ":").length, lastIndex)
         .split(",");
+      labels = labels.map((l)=>l.toLowerCase());
+      value = value.toLowerCase();
       // if the value is in the list - remove it
       if (labels.includes(value)) {
         labels = labels.filter((l) => l !== value);
@@ -272,7 +274,7 @@ export class App extends React.PureComponent<{}, AppState> {
         </div>
         <div style={{ float: "right" }}>
           <div className="page_search">
-            <input
+            Page: <input
               type="text"
               value={this.state.page}
               onChange={(e) => {
@@ -293,6 +295,7 @@ export class App extends React.PureComponent<{}, AppState> {
               }}
               min="1"
               max={this.state.ticketsData?.maxPage}
+              style={{width:"128px"}}
             />
           </div>
           <div className="page_buttons">
